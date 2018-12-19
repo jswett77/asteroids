@@ -11,11 +11,11 @@ public class Asteroid extends Mover {
 
 
   Asteroid(float x, float y) {
-    super(x, y);
+    this(x, y, 0, 0);
   }
 
   Asteroid(float x, float y, float speed, float direction) {
-    super(x, y, speed, direction);
+    this(x, y, speed, direction, 3);
   }
 
   Asteroid(float x, float y, float speed, float direction, float size) {
@@ -36,7 +36,7 @@ public class Asteroid extends Mover {
       num_sides = (int)random(3)+5;
 
 
-    float radius = MAX_RADIUS;
+    radius = MAX_RADIUS;
     if (size == 2)
       radius -= 10;
     else if (size == 1)
@@ -64,6 +64,13 @@ public class Asteroid extends Mover {
     fill(myColor, 80);
     stroke(255, 102, 0);
     beginShape();
+    if(showVelocity){
+      PVector v = velocity();      
+      v = v.mult(20);
+      line(0,0, v.x, v.y);
+      ellipse(v.x,v.y, 3,3);
+      
+    }
     rotate(radians(spin));
 
     for (int i=0; i < num_sides; i++) {
@@ -71,5 +78,9 @@ public class Asteroid extends Mover {
     }      
     endShape(CLOSE);     
     popMatrix();
+  }
+  
+  float getSize(){
+     return size; 
   }
 }

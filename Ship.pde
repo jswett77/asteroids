@@ -59,8 +59,8 @@ public class Ship extends Mover {
     }
  
  
-    PVector p1 = shieldVerticies.get(shieldVerticies.size());
-    PVector p2 = shieldVerticies.get(0);
+    PVector p2 = shieldVerticies.get(shieldVerticies.size()-1);
+    PVector p1 = shieldVerticies.get(0);
     curve(p1.x+flubX, p1.y+flubY, p1.x, p1.y, p2.x, p2.y, p2.x - flubX, p2.y - flubY);
     
     strokeWeight(f);
