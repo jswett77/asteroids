@@ -61,26 +61,36 @@ public class Asteroid extends Mover {
   void show() {
     pushMatrix();
     translate(x, y);
+
     fill(myColor, 80);
     stroke(255, 102, 0);
-    beginShape();
-    if(showVelocity){
+
+    if (showVelocity) {
       PVector v = velocity();      
       v = v.mult(20);
-      line(0,0, v.x, v.y);
-      ellipse(v.x,v.y, 3,3);
-      
+      line(0, 0, v.x, v.y);
+      ellipse(v.x, v.y, 3, 3);
     }
-    rotate(radians(spin));
 
+
+    beginShape();        
+    rotate(radians(spin));
     for (int i=0; i < num_sides; i++) {
       vertex( verticies[i].x, verticies[i].y  );
     }      
-    endShape(CLOSE);     
+    endShape(CLOSE);
+
+    ellipse(0, 0, 2*radius, 2*radius);
+
     popMatrix();
   }
+
+  float getSize() {
+    return size;
+  }
   
-  float getSize(){
-     return size; 
+  void setNewVelocity(float x, float y) { 
+    super.setNewVelocity(x,y);
+    spin_dir *= -1;
   }
 }

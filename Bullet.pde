@@ -5,11 +5,13 @@ public class Bullet extends Mover {
   Bullet(float x, float y) {
     super(x, y);
     life = 100;
+    radius = 4;
   }
 
   Bullet(float x, float y, float speed, float direction) {    
     super(x, y, speed, direction);
     life = 100;
+    radius = 4;
   } 
 
   void update() {

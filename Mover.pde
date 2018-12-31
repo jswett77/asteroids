@@ -3,14 +3,34 @@ interface Movable {
   void show();
 }
 
+
+class ColliderCount {
+  Mover m;
+  int collideDelay;
+
+  ColliderCount(Mover m) {
+    this.m = m;
+    collideDelay = 2*(int)frameRate;
+  }
+
+  int tick() {
+    return collideDelay--;
+  }
+}
+
 abstract class Mover implements Movable {
 
+  
   protected float x, y;
   protected float speed;
   protected float direction;
   protected int myColor;
   protected float radius;
   protected boolean showVelocity;
+
+  protected long id;
+
+  protected ArrayList<ColliderCount> collidingWith;
 
   Mover(float x, float y) {
     this.x = x;
@@ -20,6 +40,8 @@ abstract class Mover implements Movable {
     direction = 0;
     myColor = 240;
     radius = 10.0; //used for collision
+    id = millis();
+    collidingWith = new ArrayList<ColliderCount>();
   }
 
   Mover(float x, float y, float speed, float direction) {
@@ -40,18 +62,41 @@ abstract class Mover implements Movable {
       y = 0;
     if (y<0)
       y = height;
+
+    //chance to remove close collisions...
+    for (int i = collidingWith.size() - 1; i >= 0; i--) {
+      if (collidingWith.get(i).tick()<0) {
+        collidingWith.remove(i);
+      }
+    }
   }
 
   float getX() { 
     return x;
   }
+  
   float getY() { 
     return y;
   }
 
+  public String toString() {
+    return "(" + x + ", " + y + ") - radius = " + radius;
+  }
+
   boolean collidingWith(Mover m) {     
-    float d = dist(x, y, m.x, m.y);     
-    return (radius + m.radius)+5 > d;
+    float d = dist(x, y, m.x, m.y);
+    if ((radius + m.radius) > d) {
+      for (ColliderCount counter : collidingWith) {
+        if (counter.m.id == m.id) {
+          //println("Already colliding");
+          return false;
+        }
+      }
+      
+      collidingWith.add(new ColliderCount(m));
+      return true; //xTime > 0 && yTime > 0;
+    } 
+    return false;
   }
 
   void bounce() {
@@ -61,7 +106,7 @@ abstract class Mover implements Movable {
 
   void setNewVelocity(float x, float y) {    
     speed = (float)Math.sqrt(x*x + y*y);
-    direction = degrees( (new PVector(x, y)).heading() );    
+    direction = degrees( (new PVector(x, y)).heading() );
   }
 
   void displayVelVector(boolean enabled) {
