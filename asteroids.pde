@@ -1,25 +1,38 @@
-Ship hero; //<>// //<>//
+//import processing.video.*;  //<>//
+//Capture video;
+
+Ship hero;
 boolean ROTATE_LEFT;
 boolean ROTATE_RIGHT;
 boolean MOVE_FORWARD;
 boolean SPACE_BAR;
 
 Asteroid[] rocks;
-ArrayList<Bullet> bullets;
-int okToFireAt;
 
+int okToFireAt;
 int okToCollide;
 
+boolean DEBUG_ON = false;
+int NUM_ASTEROIDS = 30;
+
+float SCALE_UP = 1.2;
+
+int videoScale = 32;
+// Number of columns and rows in the system
+int cols, rows;
+float scale = 1.75;
+
 void setup() {
-  frameRate(66);
-  size(900, 700);
+  frameRate(48);
+  //size(640, 480); //1280 x 800
+  surface.setSize((int)(640*scale), (int)(400*scale));
   MOVE_FORWARD = false;
   ROTATE_LEFT = false;
   ROTATE_RIGHT = false;
   SPACE_BAR = false;
 
   hero = new Ship(width/2.0, height /2.0, 0, 0);
-  rocks = new Asteroid[18];
+  rocks = new Asteroid[NUM_ASTEROIDS];
   for (int i = 0; i < rocks.length; i++) {
     float speed = random(1.1)+0.2;
     int size = (int)random(3)+1;
@@ -30,13 +43,81 @@ void setup() {
       speed = speed/30;
 
     rocks[i] = newRock(speed, size);
-    rocks[i].displayVelVector(true);
+    rocks[i].displayVelVector(DEBUG_ON);
   }
 
-  bullets = new ArrayList<Bullet>();
 
   setNextTimeCanFire();
+  // Initialize columns and rows  
+  cols = (width/videoScale);  
+  rows = (height/videoScale);  
+  background(0);
+  //video = new Capture(this, width/8, height/8);
+  //video.start();
 }
+
+
+void draw() {
+
+  //doVideo();
+  background(0);
+
+  doBulletWork();
+  drawAsteroids();
+
+  //check for asteroid collisions
+  if (okToCollide() ) {
+    handleAsteroidCollisions();
+    setNextCollideCheck();
+  }
+
+  //Check for rotations
+  if (ROTATE_LEFT==true) {
+    hero.rotate_ship(-4.5);
+  }
+
+  if (ROTATE_RIGHT==true) {    
+    hero.rotate_ship(4.5);
+  }
+
+  if (MOVE_FORWARD == true) {
+    hero.increaseSpeedBy(0.5);
+  } else {
+    hero.increaseSpeedBy(-0.05);
+  }
+
+  if ( SPACE_BAR ) {
+    if (okToFire()) { 
+      hero.fireBullet();
+      setNextTimeCanFire();
+    }
+  }
+
+  hero.update();
+  hero.show();
+}
+
+// Read image from the camera
+//void captureEvent(Capture video) {  
+//  video.read();
+//}
+
+//void doVideo() {
+//  video.loadPixels();  
+//  // Begin loop for columns  
+//  for (int i = 0; i < cols; i++) {    
+//    // Begin loop for rows    
+//    for (int j = 0; j < rows; j++) {      
+//      // Where are you, pixel-wise?      
+//      int x = i*videoScale;      
+//      int y = j*videoScale;
+//      color c = video.pixels[i + j*video.width];
+//      fill(c);   
+//      stroke(0);      
+//      rect(x, y, videoScale, videoScale);
+//    }
+//  }
+//}
 
 Asteroid newRock(float speed, int size) {
   Asteroid temp = new Asteroid(
@@ -162,89 +243,42 @@ Asteroid[] fixNulls(int hadSize, float x, float y) {
       result[fillAt++] = rocks[i];
   }
 
-  int bufferWidth = 2; //<>//
+  int bufferWidth = 2;
   int loopCount = 1;
-  for (int i = 0; i < result.length; i++) {
-    println("adding i: " + i);
-    if(result[i] == null)
+  for (int i = 0; i < result.length; i++) {    
+    if (result[i] == null) {
       result[i] = newRock(speed, hadSize-1, x+bufferWidth*loopCount++, y+bufferWidth*loopCount++);
+      if (i>0) {
+        if (result[i].collidingWith(result[i-1])) {
+          result[i-1].collidingWith(result[i]);
+        }
+      }
+    }
   }
 
-  return result; //<>//
+  return result;
 }
 
 void doBulletWork() {
   //must work backwards...
-  for (int i = bullets.size() - 1; i >= 0; i--) {
-    Bullet b = bullets.get(i);
-    b.update();
-
-    //if bullet is offscreen then it should be deleted
-    if ( !b.alive() ) { 
-      bullets.remove(i);
-    } else {
-      b.show();
-    }
-
-
-    for (int j = 0; j < rocks.length; j++) {
-      if (rocks[j].collidingWith(b)) {
-        int size = (int)rocks[j].getSize();
-        float xWas = rocks[j].getX();
-        float yWas = rocks[j].getY();
-        rocks[j] = null;
-        rocks = fixNulls(size, xWas, yWas);        
-        bullets.remove(i);
-        break;
-      }
+  for (int j = 0; j < rocks.length; j++) {      
+    if (hero.hasHitTarget(rocks[j] )) {
+      int size = (int)rocks[j].getSize();
+      float xWas = rocks[j].getX();
+      float yWas = rocks[j].getY();
+      rocks[j] = null;
+      rocks = fixNulls(size, xWas, yWas);
     }
   }
 }
 
-void draw() {
-  background(0);  
-
-  doBulletWork();
-
+void drawAsteroids() {
   for (Asteroid a : rocks) {
     if (a != null) {
       a.update();
       a.show();
     }
   }
-
-  //check for asteroid collisions
-  if (okToCollide() ) {
-    handleAsteroidCollisions();
-    setNextCollideCheck();
-  }
-
-  //Check for rotations
-  if (ROTATE_LEFT==true) {
-    hero.rotate_ship(-4.5);
-  }
-
-  if (ROTATE_RIGHT==true) {    
-    hero.rotate_ship(4.5);
-  }
-
-  if (MOVE_FORWARD == true) {
-    hero.increaseSpeedBy(0.5);
-  } else {
-    hero.increaseSpeedBy(-0.75);
-  }
-
-  if ( SPACE_BAR ) {
-    if (bullets.size() < 20) {
-      if (okToFire()) { 
-        bullets.add(hero.fireBullet());
-        setNextTimeCanFire();
-      }
-    }
-  }
-
-  hero.update();
-  hero.show();
 }
 
 void keyPressed() {
