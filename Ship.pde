@@ -62,7 +62,8 @@ public class Ship extends Mover {
     triangle(-10, -10, -10, 10, 20, 0);
   }
 
-  void drawShield() {   
+  void drawShield() {
+    
     fill(#05F562, 20);
     stroke(#05F562);
     float f = g.strokeWeight;

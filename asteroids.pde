@@ -8,12 +8,14 @@ boolean MOVE_FORWARD;
 boolean SPACE_BAR;
 
 Asteroid[] rocks;
+Star[] starsField;
 
 int okToFireAt;
 int okToCollide;
 
 boolean DEBUG_ON = false;
 int NUM_ASTEROIDS = 30;
+int NUM_STARS = 200;
 
 float SCALE_UP = 1.2;
 
@@ -21,6 +23,8 @@ int videoScale = 32;
 // Number of columns and rows in the system
 int cols, rows;
 float scale = 1.75;
+
+
 
 void setup() {
   frameRate(48);
@@ -30,7 +34,10 @@ void setup() {
   ROTATE_LEFT = false;
   ROTATE_RIGHT = false;
   SPACE_BAR = false;
-
+  
+  
+  starsField = makeStarfield(NUM_STARS);
+  
   hero = new Ship(width/2.0, height /2.0, 0, 0);
   rocks = new Asteroid[NUM_ASTEROIDS];
   for (int i = 0; i < rocks.length; i++) {
@@ -62,6 +69,7 @@ void draw() {
   //doVideo();
   background(0);
 
+  drawStarfield(starsField);
   doBulletWork();
   drawAsteroids();
 
@@ -96,6 +104,29 @@ void draw() {
   hero.update();
   hero.show();
 }
+
+
+Star[] makeStarfield(int numStars){
+  Star[] result = new Star[numStars];
+  for(int i = 0; i < result.length; i++){
+    float x = (float)Math.random()*width;
+    float y = (float)Math.random()*height;
+    
+    float speed = (float)Math.random()/100.0;
+    float dir = (float)Math.random()*361;
+    result[i] = new Star(x, y, speed, dir); 
+  }
+  
+  return result;
+}
+
+void drawStarfield(Star[] stars){
+  for(int i = 0; i < stars.length; i++){
+    stars[i].show();
+    stars[i].update();   
+  }
+}
+
 
 // Read image from the camera
 //void captureEvent(Capture video) {  

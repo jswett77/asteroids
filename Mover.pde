@@ -42,6 +42,7 @@ interface Movable {
   boolean collidingWith(Movable object);
 }
 
+
 interface Animate {
   /*
     Display the isntance
@@ -106,7 +107,7 @@ abstract class Mover implements Movable, Animate {
   void update() {
     x = x + speed*(float)Math.cos(radians(direction));
     if (x>width)
-      x = 0;
+      x = 0;  
     if (x < 0)
       x = width;
     y = y + speed*(float)Math.sin(radians(direction));
