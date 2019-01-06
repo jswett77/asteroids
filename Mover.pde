@@ -1,3 +1,6 @@
+/*
+  All objects in this world that move must implemnt the Movalbe interface.
+*/
 interface Movable {
   /*
     Return the x location of the Movable
@@ -10,24 +13,29 @@ interface Movable {
   float getY();
 
   /*
-    Return the direction of the Movable
+    Return the direction of the Movable in degrees.
    */
   float getDirection();
 
   /*
-    Return the speed of the Movable
+    Return the speed of the Movable.
+    The speed you use is a relative value and will
+    feel different for different frame rates. For example,
+    if frameRate is set to 48, then a speed of 1 would move 48 pixels 
+    per second.
    */
   float getSpeed();
 
   /*
-    Return the radius of influence
+    Return the radius of influence. If you could draw a circle
+    around your object, then what would this radius be.
    */
   float getRadius();
 
   /* 
    Sets the direction of the Movable
    */
-  void setDirection(float newDirection);
+  void setDirection(float newDirectionInDegrees);
 
   /* 
    Sets the speed of the Movable
@@ -42,7 +50,9 @@ interface Movable {
   boolean collidingWith(Movable object);
 }
 
-
+/*
+  The Animate interface must 
+*/
 interface Animate {
   /*
     Display the isntance

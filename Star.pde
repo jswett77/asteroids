@@ -18,7 +18,7 @@ public class Star extends Mover {
   public void show(){
     pushMatrix();
     translate(x,y);
-    fill(myColor);
+    fill(myColor, 98);
     stroke(myColor-2);
     ellipse(0,0, radius, radius);
     popMatrix();    

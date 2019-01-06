@@ -62,7 +62,7 @@ public class Asteroid extends Mover {
     pushMatrix();
     translate(x, y);
 
-    fill(myColor, 90);
+      fill(myColor, 98);
     stroke(255, 102, 0);
 
     if (showVelocity) {

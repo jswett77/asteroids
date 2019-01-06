@@ -2,16 +2,16 @@
 //Capture video;
 
 Ship hero;
-boolean ROTATE_LEFT;
-boolean ROTATE_RIGHT;
-boolean MOVE_FORWARD;
-boolean SPACE_BAR;
-
 Asteroid[] rocks;
 Star[] starsField;
 
 int okToFireAt;
 int okToCollide;
+
+boolean ROTATE_LEFT;
+boolean ROTATE_RIGHT;
+boolean MOVE_FORWARD;
+boolean SPACE_BAR;
 
 boolean DEBUG_ON = false;
 int NUM_ASTEROIDS = 30;
@@ -293,7 +293,7 @@ Asteroid[] fixNulls(int hadSize, float x, float y) {
 void doBulletWork() {
   //must work backwards...
   for (int j = 0; j < rocks.length; j++) {      
-    if (hero.hasHitTarget(rocks[j] )) {
+    if ( hero.hasHitTarget(rocks[j])  ) {
       int size = (int)rocks[j].getSize();
       float xWas = rocks[j].getX();
       float yWas = rocks[j].getY();
