@@ -3,7 +3,7 @@
 
 Ship hero;
 Asteroid[] rocks;
-Star[] starsField;
+Star[] starField;
 
 int okToFireAt;
 int okToCollide;
@@ -36,7 +36,7 @@ void setup() {
   SPACE_BAR = false;
   
   
-  starsField = makeStarfield(NUM_STARS);
+  starField = makeStarfield(NUM_STARS);
   
   hero = new Ship(width/2.0, height /2.0, 0, 0);
   rocks = new Asteroid[NUM_ASTEROIDS];
@@ -69,7 +69,7 @@ void draw() {
   //doVideo();
   background(0);
 
-  drawStarfield(starsField);
+  drawStarfield(starField);
   doBulletWork();
   drawAsteroids();
 
